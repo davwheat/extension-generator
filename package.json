@@ -22,13 +22,20 @@
     "url": "https://github.com/FriendsOfFlarum/extension-generator/issues"
   },
   "scripts": {
-    "lint": "prettier --single-quote --trailing-comma es5 --semi --write 'src/index.js'"
+    "lint": "prettier --write \"src/*.js\""
   },
   "author": {
     "name": "David Sevilla Martín",
     "email": "david.s@redevs.org",
     "url": "https://github.com/datitisev"
   },
+  "contributors": [
+    {
+      "name": "David Wheatley",
+      "email": "hi@davwheat.dev",
+      "url": "https://davwheat.dev"
+    }
+  ],
   "engines": {
     "node": ">=8"
   },

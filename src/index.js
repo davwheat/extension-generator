@@ -1,39 +1,34 @@
-const path = require('path');
-const filesystem = require('fs');
-const args = require('args');
-const prompts = require('prompts');
-const memFs = require('mem-fs');
-const editor = require('mem-fs-editor');
-const yosay = require('yosay');
-const ora = require('ora');
-const { reset } = require('chalk');
+const path = require('path')
+const filesystem = require('fs')
+const args = require('args')
+const prompts = require('prompts')
+const memFs = require('mem-fs')
+const editor = require('mem-fs-editor')
+const yosay = require('yosay')
+const ora = require('ora')
+const { reset } = require('chalk')
 
-const licenseList = Array.from(require('spdx-license-list/simple'));
+const licenseList = Array.from(require('spdx-license-list/simple'))
 
-args.option(
-  'path',
-  'The root directory in which to create the Flarum extension',
-  process.cwd(),
-  p => path.resolve(p)
-);
+args.option('path', 'The root directory in which to create the Flarum extension', process.cwd(), p => path.resolve(p))
 
-const flags = args.parse(process.argv);
-const dir = (args.sub[0] && path.resolve(args.sub[0])) || flags.path;
-const store = memFs.create();
-const fs = editor.create(store);
+const flags = args.parse(process.argv)
+const dir = (args.sub[0] && path.resolve(args.sub[0])) || flags.path
+const store = memFs.create()
+const fs = editor.create(store)
 
-const onCancel = () => process.exit();
-const initial = true;
-let spinner;
+const onCancel = () => process.exit()
+const initial = true
+let spinner
 
-console.log(yosay('Welcome to a Flarum extension generator\n\n- FriendsOfFlarum'));
+console.log(yosay('Welcome to a Flarum extension generator\n\n- FriendsOfFlarum & davwheat'))
 
 new Promise((resolve, reject) => {
-  spinner = ora('Starting...').start();
+  spinner = ora('Starting...').start()
   filesystem.readdir(dir, (err, files = []) => {
-    spinner.stop();
-    resolve((!err || err.code !== 'ENOENT') && files.length !== 0);
-  });
+    spinner.stop()
+    resolve((!err || err.code !== 'ENOENT') && files.length !== 0)
+  })
 })
   .then(exists =>
     prompts(
@@ -50,15 +45,15 @@ new Promise((resolve, reject) => {
           message: 'Directory not empty. Overwrite?',
         },
       ],
-      { onCancel }
-    )
+      { onCancel },
+    ),
   )
   .then(({ verify, overwrite }) => {
-    if (!verify || overwrite === false) return process.exit();
+    if (!verify || overwrite === false) return process.exit()
 
-    if (overwrite) fs.delete(dir);
+    if (overwrite) fs.delete(dir)
 
-    process.stdout.write('\n');
+    process.stdout.write('\n')
 
     return prompts(
       [
@@ -66,9 +61,7 @@ new Promise((resolve, reject) => {
           name: 'packageName',
           type: 'text',
           message: `Package ${reset.dim('(vendor/extension-name)')}`,
-          validate: s =>
-            /^([0-9a-zA-Z-]{2,})\/([0-9a-zA-Z-]{2,})$/.test(s.trim()) ||
-            'Invalid package name format',
+          validate: s => /^([0-9a-zA-Z-]{2,})\/([0-9a-zA-Z-]{2,})$/.test(s.trim()) || 'Invalid package name format',
           format: s => s.toLowerCase(),
         },
         {
@@ -80,9 +73,7 @@ new Promise((resolve, reject) => {
           name: 'namespace',
           type: 'text',
           message: `Package namespace ${reset.dim('(Vendor\\ExtensionName)')}`,
-          validate: s =>
-            /^([0-9a-zA-Z]+)\\([0-9a-zA-Z]+)$/.test(s.trim()) ||
-            'Invalid namespace format',
+          validate: s => /^([0-9a-zA-Z]+)\\([0-9a-zA-Z]+)$/.test(s.trim()) || 'Invalid namespace format',
           format: str =>
             str &&
             str
@@ -99,12 +90,7 @@ new Promise((resolve, reject) => {
           name: 'authorEmail',
           type: 'text',
           message: 'Author email',
-          validate: s =>
-            !s ||
-            /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-              s
-            ) ||
-            'Invalid email format',
+          validate: s => !s || /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(s) || 'Invalid email format',
         },
         {
           name: 'license',
@@ -155,74 +141,71 @@ new Promise((resolve, reject) => {
         },
         {
           name: 'resourcesFolder',
-          type: (prev, values) =>
-            (values.useLocale || values.useCss) && 'confirm',
+          type: (prev, values) => (values.useLocale || values.useCss) && 'confirm',
           message: 'Move LESS & locale into resources folder?',
           initial,
         },
       ],
-      { onCancel }
-    );
+      { onCancel },
+    )
   })
   .then(data => {
-    process.stdout.write('\n');
-    spinner = ora('Setting up extension...').start();
+    process.stdout.write('\n')
+    spinner = ora('Setting up extension...').start()
 
     const tpl = Object.assign(data, {
       packageNamespace: data.namespace.replace(/\\/, '\\\\'),
       resourcesFolder: data.resourcesFolder ? '/resources' : '',
       year: new Date().getFullYear(),
-    });
+    })
 
-    const mv = (from, to) =>
-      fs.move(path.resolve(dir, from), path.resolve(dir, to));
-    const rename = (from, to) =>
-      filesystem.renameSync(path.resolve(dir, from), path.resolve(dir, to));
-    const del = f => fs.delete(path.resolve(dir, f));
-    const boilerplate = path.resolve(__dirname, '../boilerplate/**');
+    const mv = (from, to) => fs.move(path.resolve(dir, from), path.resolve(dir, to))
+    const rename = (from, to) => filesystem.renameSync(path.resolve(dir, from), path.resolve(dir, to))
+    const del = f => fs.delete(path.resolve(dir, f))
+    const boilerplate = path.resolve(__dirname, '../boilerplate/**')
 
-    fs.copyTpl(boilerplate, dir, tpl);
-    mv('gitignore', '.gitignore');
-    mv('gitattributes', '.gitattributes');
+    fs.copyTpl(boilerplate, dir, tpl)
+    mv('gitignore', '.gitignore')
+    mv('gitattributes', '.gitattributes')
 
-    if (!tpl.useLocale) del('locale');
-    if (!tpl.useJs) del('js');
-    if (!tpl.useCss) del('less');
+    if (!tpl.useLocale) del('locale')
+    if (!tpl.useJs) del('js')
+    if (!tpl.useCss) del('less')
     if (!tpl.admin) {
-      del('less/admin.less');
-      del('js/src/admin');
-      del('js/admin.js');
+      del('less/admin.less')
+      del('js/src/admin')
+      del('js/admin.js')
     }
     if (!tpl.forum) {
-      if (tpl.useCss) del('less/app.less');
+      if (tpl.useCss) del('less/app.less')
       if (tpl.useJs) {
-        del('js/src/forum');
-        del('js/forum.js');
+        del('js/src/forum')
+        del('js/forum.js')
       }
     }
     if (tpl.resourcesFolder) {
       if (tpl.useCss) {
-        if (tpl.admin) mv('less/admin.less', 'resources/less/admin.less');
-        if (tpl.forum) mv('less/forum.less', 'resources/less/forum.less');
-        del('less');
+        if (tpl.admin) mv('less/admin.less', 'resources/less/admin.less')
+        if (tpl.forum) mv('less/forum.less', 'resources/less/forum.less')
+        del('less')
       }
-      if (tpl.useLocale) mv('locale/**', 'resources/locale');
-    } else del('resources');
+      if (tpl.useLocale) mv('locale/**', 'resources/locale')
+    } else del('resources')
 
-    const license = require(`spdx-license-list/licenses/${data.license}`);
-    fs.write(path.resolve(dir, 'LICENSE.md'), license.licenseText);
+    const license = require(`spdx-license-list/licenses/${data.license}`)
+    fs.write(path.resolve(dir, 'LICENSE.md'), license.licenseText)
 
     return new Promise((resolve, reject) => {
       fs.commit(err => {
-        if (err) return reject(err);
-        resolve();
-      });
-    });
+        if (err) return reject(err)
+        resolve()
+      })
+    })
   })
   .then(() => {
-    spinner.succeed(`Successfully set up Flarum extension in ${dir}`);
+    spinner.succeed(`Successfully set up Flarum extension in ${dir}`)
   })
   .catch(err => {
-    if (spinner) spinner.fail();
-    console.error(err);
-  });
+    if (spinner) spinner.fail()
+    console.error(err)
+  })
