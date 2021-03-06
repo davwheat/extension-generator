@@ -1,9 +1,9 @@
 // Mithril
-import Mithril from 'mithril';
+import Mithril from 'mithril'
 
 // Other third-party libs
-import * as _dayjs from 'dayjs';
-import * as _$ from 'jquery';
+import * as _dayjs from 'dayjs'
+import * as _$ from 'jquery'
 
 /**
  * flarum/core exposes several extensions globally:
@@ -16,14 +16,14 @@ import * as _$ from 'jquery';
  * to (and should not) bundle these themselves.
  */
 declare global {
-  const $: typeof _$;
-  const m: Mithril.Static;
-  const dayjs: typeof _dayjs;
+  const $: typeof _$
+  const m: Mithril.Static
+  const dayjs: typeof _dayjs
 }
 
 /**
  * All global variables owned by flarum/core.
  */
 declare global {
-  const app: unknown;
+  const app: any
 }

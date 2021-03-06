@@ -1,3 +1,3 @@
 app.initializers.add('<%= packageName %>', () => {
-  console.log('[<%= packageName %>] Hello, forum!');
-});
+  console.log('[<%= packageName %>] Hello, forum!')
+})
