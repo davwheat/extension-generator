@@ -18,6 +18,6 @@
   "scripts": {
     "dev": "webpack --mode development --watch",
     "build": "webpack --mode production",
-    "format":"echo \"Please use composer run format in future!\n\" && cd .. && composer run format"
+    "format": "echo \"Please use composer run format in future!\n\" && cd .. && composer run format"
   }
 }
