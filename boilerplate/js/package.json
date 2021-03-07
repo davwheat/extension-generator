@@ -12,20 +12,12 @@
   "devDependencies": {
     "@types/jquery": "^3.5.5",
     "@types/mithril": "^2.0.6",
-    "cross-env": "^7.0.3",
     "dayjs": "^1.10.4",
-    "git-format-staged": "^2.1.1",
-    "husky": "^5.1.3",
-    "jquery": "^3.6.0",
-    "prettier": "^2.2.1",
-    "shx": "^0.3.3"
+    "jquery": "^3.6.0"
   },
   "scripts": {
     "dev": "webpack --mode development --watch",
     "build": "webpack --mode production",
-    "format": "prettier --write \"../**/*.{js,ts,jsx,tsx,json,less,md}\"",
-    "format:check": "prettier --check \"../**/*.{js,ts,jsx,tsx,json,less,md}\"",
-    "format:staged-only": "cross-env git-format-staged --formatter \"prettier --stdin-filepath '{}'\" \"*.js\" \"../*.jsx\" \"../*.ts\" \"../*.tsx\" \"../*.md\" \"../*.less\" \"../*.json\"",
-    "postinstall": "cd .. && cross-env husky install && cross-env shx rm -rf .git/hooks && cross-env shx ln -s ../.husky .git/hooks"
+    "format":"echo \"Please use composer run format in future!\n\" && cd .. && composer run format"
   }
 }

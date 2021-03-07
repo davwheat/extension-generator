@@ -16,6 +16,11 @@
       "role": "Developer"
     }
   <% } %>],
+  "support": {
+    "issues": "https://github.com/<%= packageName %>/issues",
+    "source": "https://github.com/<%= packageName %>",
+    "forum": "https://discuss.flarum.org/d/1"
+  },
   "autoload": {
     "psr-4": {
       "<%= packageNamespace %>\\": "src/"
@@ -30,9 +35,11 @@
         "backgroundColor": "",
         "color": ""
       }
-    },
-    "flagrow": {
-      "discuss": ""
     }
+  },
+  "scripts": {
+    "format": "prettier --write \"**/*.{js,ts,jsx,tsx,json,less,md,php,yml}\"",
+    "format:check": "prettier --check \"**/*.{js,ts,jsx,tsx,json,less,md,php,yml}\"",
+    "format:staged": "git-format-staged --formatter \"prettier --stdin-filepath '{}'\" \"*.js\" \"*.jsx\" \"*.ts\" \"*.tsx\" \"*.md\" \"*.less\" \"*.json\" \"*.php\" \"*.svg\""
   }
 }
